@@ -83,8 +83,30 @@ pub fn trace_function<R, F>(code: u32, args: &[usize; 4], func: F) -> R where F:
     result
 }
 
+/// An RAII class to automatically add start and end traces on creation and drop
+/// respectively.
+pub struct AutoTrace<'a> {
+    code: u32,
+    args: &'a [usize; 4],
+}
+
+impl<'a> AutoTrace<'a> {
+    pub fn new(code: u32, args: &'a [usize; 4]) -> AutoTrace<'a> {
+        start(code, args);
+        AutoTrace {
+            code: code,
+            args: args,
+        }
+    }
+}
+
+impl<'a> Drop for AutoTrace<'a> {
+    fn drop(&mut self) {
+        end(self.code, self.args);
+    }
+}
+
 #[cfg(target_os = "macos")]
 extern {
     fn kdebug_trace(code: u32, arg0: usize, arg1: usize, arg2: usize, arg3: usize, arg4: usize);
 }
-
