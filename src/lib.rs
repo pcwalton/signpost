@@ -17,6 +17,24 @@ const KDBG_SUBCLASS_OFFSET: u32 = 16;
 #[cfg(target_os = "macos")]
 const KDBG_CODE_OFFSET: u32 = 2;
 
+/// When passed as the last argument to a trace, and when "color using last
+/// argument" is checked in Instruments' "Points of Interest" options sidebar,
+/// controls the color a trace is rendered with.
+///
+/// ```
+/// signpost::start(42, &[0, 0, 0, signpost::Color::Blue as usize]);
+/// // Do stuff...
+/// signpost::end(42, &[0, 0, 0, signpost::Color::Blue as usize]);
+/// ```
+#[cfg(target_os="macos")]
+pub enum Color {
+    Blue = 0,
+    Green = 1,
+    Purple = 2,
+    Orange = 3,
+    Red = 4,
+}
+
 #[cfg(target_os = "macos")]
 fn appsdbg_code(subclass: u32, code: u32) -> u32 {
     kdbg_code(DBG_APPS, subclass, code)
